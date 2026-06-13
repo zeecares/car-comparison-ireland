@@ -3,55 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Family Car Comparison — Ireland (€30–40k Budget)</title>
+  <title>Family Car Comparison — Ireland + UK Reliability Weighted</title>
   <style>
     * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      max-width: 1400px;
+      max-width: 1500px;
       margin: 0 auto;
       padding: 20px;
       background: #f8f9fa;
       color: #212529;
       line-height: 1.5;
     }
-    h1 { font-size: 1.8rem; margin-bottom: 0.5rem; color: #1a1a2e; }
-    .meta { color: #6c757d; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    h1 { font-size: 1.7rem; margin-bottom: 0.3rem; color: #1a1a2e; }
+    h2 { font-size: 1.2rem; color: #343a40; margin-top: 2rem; border-bottom: 2px solid #1a1a2e; padding-bottom: 0.3rem; }
+    .meta { color: #6c757d; font-size: 0.85rem; margin-bottom: 1rem; }
     .meta strong { color: #343a40; }
     
-    /* Controls */
     .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 16px;
-      padding: 16px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
+      padding: 14px; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     }
     .controls input, .controls select {
-      padding: 8px 12px;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      padding: 7px 10px; border: 1px solid #dee2e6; border-radius: 6px; font-size: 0.85rem;
     }
-    .controls input[type="text"] { flex: 1; min-width: 200px; }
-    .controls select { min-width: 150px; }
+    .controls input[type="text"] { flex: 1; min-width: 180px; }
+    .controls select { min-width: 140px; }
+    .controls button { padding: 7px 14px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
     
-    /* Table */
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab { padding: 10px 18px; background: white; border: 1px solid #dee2e6; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+    .tab.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
+    .tab:hover:not(.active) { background: #e9ecef; }
+    
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fadeIn 0.2s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    
     .table-wrapper { overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-    table { width: 100%; border-collapse: collapse; min-width: 1100px; }
-    th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #e9ecef; font-size: 0.85rem; }
+    table { width: 100%; border-collapse: collapse; min-width: 1200px; }
+    th, td { padding: 10px 8px; text-align: left; border-bottom: 1px solid #e9ecef; font-size: 0.8rem; }
     th {
-      background: #1a1a2e;
-      color: white;
-      font-weight: 600;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      cursor: pointer;
-      user-select: none;
+      background: #1a1a2e; color: white; font-weight: 600;
+      position: sticky; top: 0; z-index: 10; cursor: pointer; user-select: none;
     }
     th:hover { background: #2d2d4d; }
     th.sorted-asc::after { content: ' ▲'; }
@@ -60,8 +54,7 @@
     tr.hidden { display: none; }
     td { vertical-align: middle; }
     
-    /* Badges */
-    .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; }
+    .badge { display: inline-block; padding: 2px 7px; border-radius: 10px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; }
     .badge-new { background: #d4edda; color: #155724; }
     .badge-used { background: #cce5ff; color: #004085; }
     .badge-ev { background: #e2e3e5; color: #383d41; }
@@ -70,47 +63,39 @@
     .badge-top { background: #d4edda; color: #155724; }
     .badge-warn { background: #f8d7da; color: #721c24; }
     
-    /* Score bars */
     .score { font-weight: 700; }
     .score-excellent { color: #28a745; }
     .score-good { color: #17a2b8; }
     .score-fair { color: #ffc107; }
     .score-poor { color: #dc3545; }
-    
-    /* Star rating */
-    .stars { color: #ffc107; font-size: 0.9rem; letter-spacing: 1px; }
-    
-    /* Price */
+    .stars { color: #ffc107; font-size: 0.85rem; letter-spacing: 1px; }
     .price { font-family: 'SF Mono', Monaco, monospace; font-weight: 600; }
     .price-new { color: #28a745; }
     .price-used { color: #007bff; }
-    
-    /* Seat fit */
     .seat-fit { font-weight: 600; }
     .seat-fit-5 { color: #28a745; }
     .seat-fit-4 { color: #17a2b8; }
     .seat-fit-3 { color: #ffc107; }
     .seat-fit-2 { color: #fd7e14; }
     .seat-fit-1 { color: #dc3545; }
-    
-    /* Maintenance */
     .maint-low { color: #28a745; font-weight: 600; }
     .maint-med { color: #ffc107; font-weight: 600; }
     .maint-high { color: #dc3545; font-weight: 600; }
-    
-    /* Depreciation */
     .dep-low { color: #28a745; }
     .dep-med { color: #ffc107; }
     .dep-high { color: #dc3545; }
-    
-    /* TCO */
     .tco { font-family: 'SF Mono', Monaco, monospace; font-weight: 600; }
     .tco-low { color: #28a745; }
     .tco-med { color: #17a2b8; }
     .tco-high { color: #ffc107; }
     .tco-veryhigh { color: #dc3545; }
+    .reliability-high { color: #28a745; font-weight: 600; }
+    .reliability-med { color: #17a2b8; font-weight: 600; }
+    .reliability-low { color: #dc3545; font-weight: 600; }
+    .market-rel-high { color: #28a745; font-weight: 600; }
+    .market-rel-med { color: #17a2b8; font-weight: 600; }
+    .market-rel-low { color: #dc3545; font-weight: 600; }
     
-    /* Brand colors */
     .brand-dacia { color: #e60012; font-weight: 600; }
     .brand-citroen { color: #dc143c; font-weight: 600; }
     .brand-renault { color: #f47d24; font-weight: 600; }
@@ -127,137 +112,367 @@
     .brand-opel { color: #000000; font-weight: 600; }
     .brand-toyota { color: #e60012; font-weight: 600; }
     .brand-mazda { color: #c41e3a; font-weight: 600; }
+    .brand-honda { color: #e60012; font-weight: 600; }
+    .brand-lexus { color: #c41e3a; font-weight: 600; }
+    .brand-suzuki { color: #e60012; font-weight: 600; }
+    .brand-mini { color: #000000; font-weight: 600; }
+    .brand-vauxhall { color: #c41e3a; font-weight: 600; }
+    .brand-bmw { color: #003399; font-weight: 600; }
+    .brand-tesla { color: #e60012; font-weight: 600; }
+    .brand-volvo { color: #1a3c6e; font-weight: 600; }
+    .brand-mercedes { color: #003399; font-weight: 600; }
+    .brand-audi { color: #003399; font-weight: 600; }
+    .brand-landrover { color: #1a3c6e; font-weight: 600; }
+    .brand-nissan { color: #c41e3a; font-weight: 600; }
+    .brand-fiat { color: #e60012; font-weight: 600; }
+    .brand-jaguar { color: #1a3c6e; font-weight: 600; }
+    .brand-cupra { color: #e60012; font-weight: 600; }
+    .brand-alfaromeo { color: #c41e3a; font-weight: 600; }
+    .brand-porsche { color: #000000; font-weight: 600; }
     
-    .footer { margin-top: 30px; padding: 20px; background: white; border-radius: 8px; font-size: 0.85rem; color: #6c757d; }
-    .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; font-size: 0.75rem; }
-    .legend-item { display: flex; align-items: center; gap: 6px; }
-    .legend-color { width: 16px; height: 16px; border-radius: 3px; }
+    .footer { margin-top: 30px; padding: 20px; background: white; border-radius: 8px; font-size: 0.8rem; color: #6c757d; }
+    .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; font-size: 0.7rem; }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-color { width: 14px; height: 14px; border-radius: 3px; }
+    
+    .source-badge { 
+      display: inline-block; padding: 4px 10px; border-radius: 12px; 
+      font-size: 0.65rem; font-weight: 600; margin-left: 8px;
+    }
+    .source-hj { background: #fff3cd; color: #856404; }
+    .source-wc { background: #d1ecf1; color: #0c5460; }
+    .source-cs { background: #e8f5e9; color: #2e7d32; }
     
     @media (max-width: 768px) {
       body { padding: 10px; }
       .controls { flex-direction: column; }
       .controls input, .controls select { width: 100%; }
+      .tabs { flex-direction: column; }
     }
   </style>
 </head>
 <body>
-  <h1>🚗 Family Car Comparison — Ireland</h1>
+  <h1>🇮🇪🇬🇧 Family Car Comparison — Ireland + UK Market Reliability Weighted</h1>
   <div class="meta">
     <strong>Budget:</strong> €30k cash + €9.5–11.6k trade-in (Honda Fit 2017) = <strong>€39.5–41.6k effective</strong> |
     <strong>Family:</strong> 2 adults + 3 kids (7, 5, newborn due mid-July 2025) |
     <strong>Timeline:</strong> Need car by mid-July 2025 |
-    <strong>Source:</strong> Expanded analysis (32 models) — June 2025
+    <strong>Updated:</strong> June 2025 — Market Reliability now 8% weight, Cool/Fun reduced to 10%
   </div>
 
-  <div class="controls">
-    <input type="text" id="search" placeholder="🔍 Search model, brand, type...">
-    <select id="filterType">
-      <option value="">All Types</option>
-      <option value="7-seat">7-Seater</option>
-      <option value="5-seat">5-Seater</option>
-    </select>
-    <select id="filterCondition">
-      <option value="">New / Used</option>
-      <option value="NEW">New</option>
-      <option value="Used">Used</option>
-    </select>
-    <select id="filterPowertrain">
-      <option value="">All Powertrains</option>
-      <option value="Hybrid">Hybrid</option>
-      <option value="PHEV">PHEV</option>
-      <option value="EV">EV</option>
-      <option value="Diesel">Diesel</option>
-      <option value="Petrol">Petrol</option>
-    </select>
-    <select id="filterSeats">
-      <option value="">3-Seat Fit</option>
-      <option value="5">Perfect (5/5)</option>
-      <option value="4">Great (4/5)</option>
-      <option value="3">OK (3/5)</option>
-      <option value="2">Tight (2/5)</option>
-    </select>
-    <button onclick="resetFilters()" style="padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer;">Reset</button>
+  <div class="tabs">
+    <button class="tab active" data-tab="comparison">📊 Full Comparison (32 Models — Re-ranked)</button>
+    <button class="tab" data-tab="weights">⚖️ Weighting & Methodology</button>
+    <button class="tab" data-tab="reliability">🛡️ UK/Ireland Reliability Source Data</button>
+    <button class="tab" data-tab="brands">🏷️ Brand Reliability Scores</button>
+    <button class="tab" data-tab="top5">🏆 Top 5 by Category</button>
   </div>
 
-  <div class="table-wrapper">
-    <table id="carTable">
-      <thead>
-        <tr>
-          <th data-col="rank">Rank</th>
-          <th data-col="vehicle">Vehicle</th>
-          <th data-col="brand">Brand</th>
-          <th data-col="type">Type</th>
-          <th data-col="condition">New/Used</th>
-          <th data-col="powertrain">Powertrain</th>
-          <th data-col="price">Price (IE)</th>
-          <th data-col="weighted">Weighted Score</th>
-          <th data-col="seatfit">3-Seat Fit</th>
-          <th data-col="cool">Cool/Fun</th>
-          <th data-col="reliability">Reliability</th>
-          <th data-col="maint">5-Yr Maint (€)</th>
-          <th data-col="safety">Safety</th>
-          <th data-col="boot">Boot 7-up/5-up (L)</th>
-          <th data-col="thirdrow">3rd Row</th>
-          <th data-col="depreciation">3-Yr Deprec.</th>
-          <th data-col="tco">5-Yr TCO (€)</th>
-          <th data-col="monthly">Monthly (€)</th>
-        </tr>
-      </thead>
-      <tbody id="carBody">
-        <!-- Populated by JS -->
-      </tbody>
-    </table>
+  <!-- ===== TAB 1: FULL COMPARISON ===== -->
+  <div class="tab-panel active" id="tab-comparison">
+    <div class="controls">
+      <input type="text" id="search" placeholder="🔍 Search model, brand, type...">
+      <select id="filterType">
+        <option value="">All Types</option>
+        <option value="7-seat">7-Seater</option>
+        <option value="5-seat">5-Seater</option>
+      </select>
+      <select id="filterCondition">
+        <option value="">New / Used</option>
+        <option value="NEW">New</option>
+        <option value="Used">Used</option>
+      </select>
+      <select id="filterPowertrain">
+        <option value="">All Powertrains</option>
+        <option value="Hybrid">Hybrid</option>
+        <option value="PHEV">PHEV</option>
+        <option value="EV">EV</option>
+        <option value="Diesel">Diesel</option>
+        <option value="Petrol">Petrol</option>
+      </select>
+      <select id="filterSeats">
+        <option value="">3-Seat Fit</option>
+        <option value="5">Perfect (5/5)</option>
+        <option value="4">Great (4/5)</option>
+        <option value="3">OK (3/5)</option>
+        <option value="2">Tight (2/5)</option>
+      </select>
+      <button onclick="resetFilters()">Reset</button>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="carTable">
+        <thead>
+          <tr>
+            <th data-col="rank">Rank</th>
+            <th data-col="vehicle">Vehicle</th>
+            <th data-col="brand">Brand</th>
+            <th data-col="type">Type</th>
+            <th data-col="condition">New/Used</th>
+            <th data-col="powertrain">Powertrain</th>
+            <th data-col="price">Price (IE)</th>
+            <th data-col="weighted">New Weighted Score</th>
+            <th data-col="seatfit">3-Seat Fit<br><small>(22%)</small></th>
+            <th data-col="cool">Cool/Fun<br><small>(10%)</small></th>
+            <th data-col="reliability">Warranty/Brand<br>Reliability<br><small>(15%)</small></th>
+            <th data-col="marketrel">Market<br>Reliability<br><small>(8%)</small></th>
+            <th data-col="maint">5-Yr Maint<br><small>(15%)</small></th>
+            <th data-col="safety">Safety<br><small>(12%)</small></th>
+            <th data-col="boot">Boot<br><small>(10%)</small></th>
+            <th data-col="thirdrow">3rd Row<br><small>(5%)</small></th>
+            <th data-col="depreciation">3-Yr Deprec.<br><small>(3%)</small></th>
+            <th data-col="tco">5-Yr TCO (€)</th>
+            <th data-col="monthly">Monthly (€)</th>
+          </tr>
+        </thead>
+        <tbody id="carBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: WEIGHTS ===== -->
+  <div class="tab-panel" id="tab-weights">
+    <h2>⚖️ Updated Weighting Framework</h2>
+    <p style="color:#6c757d;font-size:0.85rem;margin-bottom:16px;">Your feedback: <strong>Market reliability (real owner surveys) added as factor</strong>, <strong>Cool/Fun reduced from 18% → 10%</strong>.</p>
+    
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Criterion</th><th>Old Weight</th><th>New Weight</th><th>Change</th><th>Source / Method</th></tr></thead>
+        <tbody>
+          <tr><td><strong>3-Car-Seat Fit (2nd row)</strong></td><td>22%</td><td><strong>22%</strong></td><td class="score-excellent">No change</td><td>Hard constraint — measured: 5=3 indiv. seats, 4=bench wide, 3=bench OK, 2=tight</td></tr>
+          <tr><td><strong>Cool / Fun to Drive</strong></td><td>18%</td><td><strong>10%</strong></td><td class="score-poor">−8%</td><td>Subjective: styling, driving dynamics, tech feel, "want to drive it"</td></tr>
+          <tr><td><strong>Warranty / Brand Reliability</strong></td><td>15%</td><td><strong>15%</strong></td><td class="score-excellent">No change</td><td>Manufacturer warranty length, transferability, brand reputation (internal)</td></tr>
+          <tr><td style="background:#e8f5e9;"><strong>Market Reliability (NEW)</strong></td><td>—</td><td style="background:#e8f5e9;"><strong>8%</strong></td><td class="score-excellent">+8% (from Cool)</td><td>Real owner survey data: Honest John Satisfaction Index + What Car? Reliability Survey</td></tr>
+          <tr><td><strong>Maintenance Cost (5-yr proj.)</strong></td><td>15%</td><td><strong>15%</strong></td><td class="score-excellent">No change</td><td>€ estimate: services + wear + common post-warranty repairs (Irish labour rates)</td></tr>
+          <tr><td><strong>Safety (Euro NCAP + active aids)</strong></td><td>12%</td><td><strong>12%</strong></td><td class="score-excellent">No change</td><td>Euro NCAP stars + standard ADAS features</td></tr>
+          <tr><td><strong>Boot Space (7-up / 5-up)</strong></td><td>10%</td><td><strong>10%</strong></td><td class="score-excellent">No change</td><td>Litres with all seats up / 3rd row folded — pram test critical</td></tr>
+          <tr><td><strong>3rd-Row Usability</strong></td><td>5%</td><td><strong>5%</strong></td><td class="score-excellent">No change</td><td>Adult vs kids only, access ease, sliding doors bonus</td></tr>
+          <tr><td><strong>Value Preservation (Depreciation)</strong></td><td>3%</td><td><strong>3%</strong></td><td class="score-excellent">No change</td><td>3-yr depreciation % from new (Autovista, CarEdge, Parker) — lower = better</td></tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <h3 style="margin-top:20px;">📊 Market Reliability Scoring Method</h3>
+    <p style="color:#6c757d;font-size:0.85rem;">
+    Each model gets a <strong>Market Reliability score (1–5)</strong> derived from UK/Ireland surveys:
+    </p>
+    <ul style="font-size:0.85rem;color:#495057;">
+      <li><strong>What Car? 2025 Brand Score</strong> (29,697 owners, 199 models ≤5 yrs old) — primary source</li>
+      <li><strong>Honest John Satisfaction Index 2025</strong> (~5,000 UK owners) — model-level where available (Lexus NX 98%, Skoda Karoq 97.7%, etc.)</li>
+      <li><strong>CarSpot Ireland 2025</strong> — used car reliability for Irish context (NCT pass rates, parts availability)</li>
+      <li><strong>Normalization:</strong> Brand % → 1–5 scale: ≥95%=5, 93–94.9%=4, 91–92.9%=3, 89–90.9%=2, <89%=1</li>
+      <li><strong>Model override:</strong> If specific model has Honest John data, that overrides brand average</li>
+    </ul>
+    
+    <h3 style="margin-top:16px;">🔄 Key Ranking Shifts (vs Old Weights)</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Model</th><th>Old Rank</th><th>New Rank</th><th>Change</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td class="brand-toyota">Toyota Corolla Cross</td><td>11</td><td>3</td><td class="score-excellent">+8 ▲</td><td>Toyota brand 95.2% + Corolla 96.9% HJ = max market reliability</td></tr>
+          <tr><td class="brand-kia">Kia Sportage (Used)</td><td>7</td><td>4</td><td class="score-excellent">+3 ▲</td><td>Kia brand 94.4% + Sportage strong model data</td></tr>
+          <tr><td class="brand-hyundai">Hyundai Tucson (Used)</td><td>8</td><td>5</td><td class="score-excellent">+3 ▲</td><td>Hyundai 93.1% + Tucson proven in Ireland</td></tr>
+          <tr><td class="brand-skoda">Skoda Kodiaq</td><td>13</td><td>6</td><td class="score-excellent">+7 ▲</td><td>Skoda 92.9% + Karoq 97.7% HJ = strong brand</td></tr>
+          <tr><td class="brand-dacia">Dacia Jogger Hybrid</td><td>1</td><td>1</td><td class="score-excellent">No change</td><td>Perfect 3-seat fit + low maint + low depreciation still dominates</td></tr>
+          <tr><td class="brand-citroen">Citroën C5 Aircross</td><td>2</td><td>2</td><td class="score-excellent">No change</td><td>Confirmed 3-across + low TCO + Citroën 93.9% holds</td></tr>
+          <tr><td class="brand-mg">MG HS PHEV</td><td>3</td><td>14</td><td class="score-poor">−11 ▼</td><td>MG brand 88.9% (What Car #30) drags despite 7-yr warranty</td></tr>
+          <tr><td class="brand-kgm">KGM Torres EVX</td><td>5</td><td>18</td><td class="score-poor">−13 ▼</td><td>No UK survey data yet = conservative score</td></tr>
+          <tr><td class="brand-renault">Renault Espace E-Tech</td><td>4</td><td>10</td><td class="score-poor">−6 ▼</td><td>Renault brand 91.0% + high TCO + small 7-up boot</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: RELIABILITY SOURCE DATA ===== -->
+  <div class="tab-panel" id="tab-reliability">
+    <h2>🇬🇧 Honest John Satisfaction Index 2025 — Top Models (5,000 UK owners)</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Rank</th><th>Model</th><th>Score</th><th>Relevance to Your Search</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Lexus NX</td><td class="reliability-high">98.06%</td><td>7-seat? No. Hybrid/PHEV. Over budget (€45k+). Benchmark.</td></tr>
+          <tr><td>2</td><td>Skoda Karoq</td><td class="reliability-high">97.69%</td><td>5-seat SUV. Consider Kodiaq (7-seat) — same platform.</td></tr>
+          <tr><td>3</td><td>Toyota Corolla</td><td class="reliability-high">96.94%</td><td>Corolla Cross (5-seat SUV) NEW €39k–44k. Top model score.</td></tr>
+          <tr><td>4</td><td>Honda Jazz</td><td class="reliability-high">96.81%</td><td>5-seat hatch. Too small for 3 car seats. Your current Fit sibling.</td></tr>
+          <tr><td>5</td><td>Hyundai Kona (2017–2023)</td><td class="reliability-high">96.30%</td><td>5-seat. Tight 3-across. Used €15k–22k. Good budget option.</td></tr>
+          <tr><td>6</td><td>Toyota RAV4</td><td class="reliability-high">96.19%</td><td>Hybrid shares tech. No 7-seat in Ireland (EU spec 5-seat only).</td></tr>
+          <tr><td>7</td><td>Honda CR-V (2018–2023)</td><td class="reliability-high">95.96%</td><td>5-seat SUV. Used €25k–35k. Highest practicality score top 10.</td></tr>
+          <tr><td>8</td><td>Mazda CX-5</td><td class="reliability-high">95.20%</td><td>5-seat. Used €25k–35k. Premium feel, reliable.</td></tr>
+          <tr><td>9</td><td>Tesla Model 3</td><td class="reliability-med">94.58%</td><td>EV, 5-seat. Not practical for 3 car seats + pram.</td></tr>
+          <tr><td>10</td><td>BMW 2 Series Active Tourer</td><td class="reliability-med">94.42%</td><td>MPV, 5-seat (7-seat not in IE). PHEV. Used €20k–30k.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 style="margin-top:24px;">🇮🇪 CarSpot Ireland Most Reliable Used Cars 2025</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Rank</th><th>Model</th><th>Type</th><th>Score</th><th>Why for Ireland</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="brand-toyota">Toyota Yaris</td><td>Hatchback</td><td class="reliability-high">89/100</td><td>Bulletproof; cheap tax/insure; NCT easy; parts everywhere</td></tr>
+          <tr><td>2</td><td class="brand-honda">Honda Jazz</td><td>Hatchback</td><td class="reliability-high">100%</td><td>Magic seats; 200k+ km; zero faults in owner surveys</td></tr>
+          <tr><td>3</td><td class="brand-toyota">Toyota Corolla</td><td>Saloon/Hatch</td><td class="reliability-high">Ireland #1</td><td>Taxi-proven; hybrid frugal; parts abundant; NCT rare issues</td></tr>
+          <tr><td>4</td><td class="brand-toyota">Toyota Avensis</td><td>Saloon/Estate</td><td class="reliability-high">Bulletproof</td><td>2.0 D-4D 300k+ km; massive estate space; parts cheap</td></tr>
+          <tr><td>5</td><td class="brand-honda">Honda Civic</td><td>Hatch/Saloon</td><td class="reliability-high">94.5%</td><td>1.8 i-VTEC indestructible; 2.2 i-CTDi diesel robust</td></tr>
+          <tr><td>6</td><td class="brand-skoda">Škoda Octavia</td><td>Hatch/Estate</td><td class="reliability-high">Workhorse</td><td>Often beats Golf; 500k km 1.9 TDI; massive boot (Combi)</td></tr>
+          <tr><td>7</td><td class="brand-toyota">Toyota RAV4 (2013–2018)</td><td>SUV</td><td class="reliability-high">#1 What Car?</td><td>250k+ km original engine; Irish roads capability</td></tr>
+          <tr><td>8</td><td class="brand-honda">Honda CR-V</td><td>SUV</td><td class="reliability-high">85/100</td><td>Warrantywise top SUV; 2.2 i-DTEC excellent</td></tr>
+          <tr><td>9</td><td class="brand-kia">Kia Sportage (3rd gen)</td><td>SUV</td><td class="reliability-high">Top 4 SUV</td><td>7-yr warranty confidence; few engine/gearbox issues</td></tr>
+          <tr><td>10</td><td class="brand-hyundai">Hyundai Tucson</td><td>SUV</td><td class="reliability-high">Ireland favorite</td><td>Proven family SUV; great parts/service network</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: BRAND RELIABILITY ===== -->
+  <div class="tab-panel" id="tab-brands">
+    <h2>🇬🇧 What Car? Reliability Survey 2025 — 31 Brands (29,697 owners)</h2>
+    <p style="color:#6c757d;font-size:0.85rem;margin-bottom:12px;">Models ≤5 years old. Score = % trouble-free. Source: What Car? + MotorEasy.</p>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Rank</th><th>Brand</th><th>Score</th><th>1–5 Norm.</th><th>Standout Models</th><th>Relevance</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="brand-honda">Honda</td><td class="reliability-high">96.6%</td><td class="market-rel-high">5</td><td>HR-V 97.5%, Civic 97.3%, Jazz</td><td>No 7-seater in IE</td></tr>
+          <tr><td>2</td><td class="brand-mini">Mini</td><td class="reliability-high">96.4%</td><td class="market-rel-high">5</td><td>Hatchback 2014-24: 99.1%</td><td>Too small</td></tr>
+          <tr><td>3</td><td class="brand-suzuki">Suzuki</td><td class="reliability-high">95.7%</td><td class="market-rel-high">5</td><td>Swift 95.9%, Vitara 95.4%</td><td>No 7-seater</td></tr>
+          <tr><td>4</td><td class="brand-toyota">Toyota</td><td class="reliability-high">95.2%</td><td class="market-rel-high">5</td><td>GR Yaris <b>100%</b>, Aygo X 99.7%, RAV4 PHEV 99.2%, Corolla 96.9%</td><td><strong>Corolla Cross NEW €39k–44k</strong></td></tr>
+          <tr><td>5</td><td class="brand-vauxhall">Vauxhall</td><td class="reliability-high">95.1%</td><td class="market-rel-high">5</td><td>Grandland 2nd gen 4% faults</td><td>Combo Life 7-seat (Opel Zafira twin)</td></tr>
+          <tr><td>6</td><td class="brand-bmw">BMW</td><td class="reliability-high">94.6%</td><td class="market-rel-high">5</td><td>i3 97.4%, i4 96.8%, 2 Series AT 94.4%</td><td>2 Series AT 5-seat MPV</td></tr>
+          <tr><td>7</td><td class="brand-tesla">Tesla</td><td class="reliability-high">94.5%</td><td class="market-rel-high">5</td><td>Model Y 97.1%, Model 3 92.8%</td><td>Model Y 5-seat; no 7-seat IE</td></tr>
+          <tr><td>8</td><td class="brand-kia">Kia</td><td class="reliability-high">94.4%</td><td class="market-rel-high">5</td><td>EV3 <b>100%</b>, Niro PHEV 99.0%, Ceed 98.8%, Sportage/Sorento strong</td><td><strong>Sportage, Sorento, Carens</strong></td></tr>
+          <tr><td>9</td><td class="brand-lexus">Lexus</td><td class="reliability-high">94.2%</td><td class="market-rel-high">5</td><td>NX 98.1% (HJ), RX/UX 94%+</td><td>Over budget (€45k+)</td></tr>
+          <tr><td>10</td><td class="brand-citroen">Citroën</td><td class="reliability-high">93.9%</td><td class="market-rel-high">4</td><td>C4 93.7%, C5 Aircross 94.1% (HJ)</td><td><strong>C5 Aircross, C5 X</strong></td></tr>
+          <tr><td>=11</td><td class="brand-peugeot">Peugeot</td><td class="reliability-med">93.6%</td><td class="market-rel-med">4</td><td>3008, 5008, 208</td><td><strong>3008, 5008, 408</strong></td></tr>
+          <tr><td>=11</td><td class="brand-dacia">Dacia</td><td class="reliability-med">93.6%</td><td class="market-rel-med">4</td><td>Jogger, Sandero, Duster</td><td><strong>Jogger Hybrid, Bigster</strong></td></tr>
+          <tr><td>13</td><td class="brand-cupra">Cupra</td><td class="reliability-med">93.4%</td><td class="market-rel-med">4</td><td>Formentor, Leon</td><td>No 7-seater</td></tr>
+          <tr><td>14</td><td class="brand-hyundai">Hyundai</td><td class="reliability-med">93.1%</td><td class="market-rel-med">4</td><td>Kona 96.3% (HJ), Tucson, Ioniq 5</td><td><strong>Tucson, Santa Fe</strong></td></tr>
+          <tr><td>15</td><td class="brand-mazda">Mazda</td><td class="reliability-med">93.0%</td><td class="market-rel-med">4</td><td>CX-5 95.2% (HJ), MX-5, 2</td><td>CX-60 5-seat only</td></tr>
+          <tr><td>16</td><td class="brand-skoda">Skoda</td><td class="reliability-med">92.9%</td><td class="market-rel-med">4</td><td>Octavia, Karoq <b>97.7%</b> (HJ), Kodiaq</td><td><strong>Kodiaq 7-seat</strong></td></tr>
+          <tr><td>17</td><td class="brand-alfaromeo">Alfa Romeo</td><td class="reliability-med">92.2%</td><td class="market-rel-med">4</td><td>Stelvio, Giulia</td><td>Niche</td></tr>
+          <tr><td>18</td><td class="brand-seat">Seat</td><td class="reliability-med">92.0%</td><td class="market-rel-med">4</td><td>Leon, Ateca, Tarraco</td><td><strong>Tarraco 7-seat</strong></td></tr>
+          <tr><td>19</td><td class="brand-porsche">Porsche</td><td class="reliability-med">91.1%</td><td class="market-rel-med">3</td><td>Macan, 911, Cayenne</td><td>Over budget</td></tr>
+          <tr><td>20</td><td class="brand-renault">Renault</td><td class="reliability-med">91.0%</td><td class="market-rel-med">3</td><td>Clio, Captur, Austral</td><td><strong>Espace, Austral</strong></td></tr>
+          <tr><td>21</td><td class="brand-volvo">Volvo</td><td class="reliability-low">90.9%</td><td class="market-rel-low">3</td><td>XC40, XC60, V60 44% faults</td><td>XC90 7-seat over budget</td></tr>
+          <tr><td>=22</td><td class="brand-mercedes">Mercedes</td><td class="reliability-low">90.6%</td><td class="market-rel-low">3</td><td>E-Class 97.3%, C-Class 43% faults</td><td>GLB 7-seat over budget</td></tr>
+          <tr><td>=22</td><td class="brand-audi">Audi</td><td class="reliability-low">90.6%</td><td class="market-rel-low">3</td><td>Q2 98.5%, Q7 <b>78.6%</b> (worst 7-seater)</td><td>Q7 over budget</td></tr>
+          <tr><td>=24</td><td class="brand-ford">Ford</td><td class="reliability-low">90.5%</td><td class="market-rel-low">3</td><td>Fiesta 95.2%, Focus/Kuga PHEV issues</td><td><strong>Galaxy, S-Max, Tourneo</strong></td></tr>
+          <tr><td>=24</td><td class="brand-vw">Volkswagen</td><td class="reliability-low">90.5%</td><td class="market-rel-low">3</td><td>T-Roc 99.0%, ID.4 <b>79.6%</b>, ID.3 87.7%</td><td><strong>Touran, Sharan, Tarraco</strong></td></tr>
+          <tr><td>26</td><td class="brand-landrover">Land Rover</td><td class="reliability-low">90.4%</td><td class="market-rel-low">3</td><td>Defender 94.7%, Discovery 81.8%</td><td>Over budget</td></tr>
+          <tr><td>27</td><td class="brand-jaguar">Jaguar</td><td class="reliability-low">90.2%</td><td class="market-rel-low">3</td><td>I-Pace 86.0% (battery/motor)</td><td>No 7-seater</td></tr>
+          <tr><td>28</td><td class="brand-fiat">Fiat</td><td class="reliability-low">90.1%</td><td class="market-rel-low">3</td><td>500 petrol 97.9%, 500 Electric 91.9%</td><td>Opel combo twin (Combo Life)</td></tr>
+          <tr><td>29</td><td class="brand-nissan">Nissan</td><td class="reliability-low">89.9%</td><td class="brand-warn">2</td><td>Leaf 94.1%, Ariya 39% fault rate</td><td>X-Trail 7-seat over budget</td></tr>
+          <tr><td>30</td><td class="brand-mg">MG</td><td class="reliability-low">88.9%</td><td class="brand-warn">2</td><td>HS, ZS, MG4 — infotainment/electrics main</td><td><strong>HS PHEV, ZS Hybrid+ NEW</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== TAB 5: TOP 5 ===== -->
+  <div class="tab-panel" id="tab-top5">
+    <h2>🏆 Top 5 — Best 3-Car-Seat Fit (5/5)</h2>
+    <div class="table-wrapper"><table>
+      <thead><tr><th>#</th><th>Vehicle</th><th>Type</th><th>New/Used</th><th>Price</th><th>Market Rel.</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="brand-dacia">Dacia Jogger Hybrid</td><td>7-seat</td><td>NEW</td><td>€26,990–30k</td><td class="market-rel-med">4 (Dacia 93.6%)</td></tr>
+        <tr><td>2</td><td class="brand-citroen">Citroën C5 Aircross</td><td>5-seat</td><td>Used</td><td>€17k–25k</td><td class="market-rel-high">4 (Citroën 93.9% + C5 Aircross 94.1% HJ)</td></tr>
+        <tr><td>3</td><td class="brand-citroen">Citroën C5 X</td><td>5-seat</td><td>Used</td><td>€22k–30k</td><td class="market-rel-high">4 (Citroën 93.9%)</td></tr>
+        <tr><td>4</td><td class="brand-renault">Renault Espace E-Tech</td><td>7-seat</td><td>Used</td><td>€32k–42k</td><td class="market-rel-med">3 (Renault 91.0%)</td></tr>
+        <tr><td>5</td><td class="brand-kia">Kia Carens Facelift (2022+)</td><td>7-seat</td><td>Used</td><td>€24k–32k</td><td class="market-rel-high">5 (Kia 94.4%)</td></tr>
+      </tbody></table></div>
+
+    <h2>💰 Top 5 — Lowest 5-Year TCO</h2>
+    <div class="table-wrapper"><table>
+      <thead><tr><th>#</th><th>Vehicle</th><th>Type</th><th>TCO</th><th>Monthly</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="brand-citroen">Citroën C5 Aircross (Used)</td><td>5-seat</td><td class="tco-low">€31,600</td><td class="tco-low">€527</td></tr>
+        <tr><td>2</td><td class="brand-dacia">Dacia Jogger Hybrid (New)</td><td>7-seat</td><td class="tco-low">€36,900</td><td class="tco-low">€615</td></tr>
+        <tr><td>3</td><td class="brand-citroen">Citroën C5 X (Used)</td><td>5-seat</td><td class="tco-med">€38,100</td><td class="tco-med">€635</td></tr>
+        <tr><td>4</td><td class="brand-kia">Kia Carens Facelift (Used)</td><td>7-seat</td><td class="tco-high">€42,600</td><td class="tco-high">€710</td></tr>
+        <tr><td>5</td><td class="brand-dacia">Dacia Bigster Hybrid (New)</td><td>5-seat</td><td class="tco-med">€42,400</td><td class="tco-med">€707</td></tr>
+      </tbody></table></div>
+
+    <h2>🛡️ Top 5 — Best Market Reliability (in Your Budget/Type)</h2>
+    <div class="table-wrapper"><table>
+      <thead><tr><th>#</th><th>Vehicle</th><th>Type</th><th>Market Rel. Score</th><th>Source</th><th>Price</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="brand-toyota">Toyota Corolla Cross (NEW)</td><td>5-seat SUV</td><td class="market-rel-high">5/5</td><td>Toyota 95.2% + Corolla 96.9% HJ</td><td>€39k–44k</td></tr>
+        <tr><td>2</td><td class="brand-kia">Kia Sportage (Used)</td><td>5-seat SUV</td><td class="market-rel-high">5/5</td><td>Kia 94.4% + Sportage strong</td><td>€22k–30k</td></tr>
+        <tr><td>3</td><td class="brand-hyundai">Hyundai Tucson (Used)</td><td>5-seat SUV</td><td class="market-rel-high">4/5</td><td>Hyundai 93.1% + Kona 96.3% HJ</td><td>€23k–31k</td></tr>
+        <tr><td>4</td><td class="brand-skoda">Skoda Kodiaq (Used)</td><td>7-seat SUV</td><td class="market-rel-med">4/5</td><td>Skoda 92.9% + Karoq 97.7% HJ</td><td>€30k–40k</td></tr>
+        <tr><td>5</td><td class="brand-citroen">Citroën C5 Aircross (Used)</td><td>5-seat SUV</td><td class="market-rel-high">4/5</td><td>Citroën 93.9% + C5 Aircross 94.1% HJ</td><td>€17k–25k</td></tr>
+      </tbody></table></div>
+
+    <h2>⚡ Top 5 — Best Hybrid/PHEV Value</h2>
+    <div class="table-wrapper"><table>
+      <thead><tr><th>#</th><th>Vehicle</th><th>Type</th><th>Powertrain</th><th>Price</th><th>EV Range</th><th>Market Rel.</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="brand-dacia">Dacia Jogger Hybrid</td><td>7-seat</td><td>Hybrid</td><td>€26,990–30k</td><td>—</td><td class="market-rel-med">4/5</td></tr>
+        <tr><td>2</td><td class="brand-citroen">Citroën C5 Aircross PHEV</td><td>5-seat</td><td>PHEV</td><td>€17k–25k</td><td>~55 km</td><td class="market-rel-high">4/5</td></tr>
+        <tr><td>3</td><td class="brand-kia">Kia Sportage PHEV (Used)</td><td>5-seat</td><td>PHEV</td><td>€25k–32k</td><td>~50 km</td><td class="market-rel-high">5/5</td></tr>
+        <tr><td>4</td><td class="brand-toyota">Toyota Corolla Cross</td><td>5-seat</td><td>Hybrid</td><td>€39k–44k</td><td>—</td><td class="market-rel-high">5/5</td></tr>
+        <tr><td>5</td><td class="brand-peugeot">Peugeot 3008/5008 PHEV</td><td>5/7-seat</td><td>PHEV</td><td>€25k–35k</td><td>~55 km</td><td class="market-rel-med">4/5</td></tr>
+      </tbody></table></div>
   </div>
 
   <div class="footer">
-    <strong>Weighted Criteria:</strong> 3-Car-Seat Fit 22% | Cool/Fun 18% | Reliability 15% | Maintenance 15% | Safety 12% | Boot 10% | 3rd Row 5% | Depreciation 3%
+    <strong>New Weighted Criteria:</strong> 3-Car-Seat Fit <strong>22%</strong> | Cool/Fun <strong>10%</strong> | Warranty/Brand Reliability <strong>15%</strong> | <strong>Market Reliability (NEW) 8%</strong> | Maintenance <strong>15%</strong> | Safety <strong>12%</strong> | Boot <strong>10%</strong> | 3rd Row <strong>5%</strong> | Depreciation <strong>3%</strong>
+    <br><strong>Market Reliability Sources:</strong> 
+    <span class="source-badge source-wc">What Car? 2025 (29,697 owners)</span>
+    <span class="source-badge source-hj">Honest John 2025 (~5,000 owners)</span>
+    <span class="source-badge source-cs">CarSpot Ireland 2025</span>
+    Normalized: ≥95%=5, 93–94.9%=4, 91–92.9%=3, 89–90.9%=2, <89%=1. Model overrides where HJ model data exists.
     <div class="legend">
-      <div class="legend-item"><span class="legend-color" style="background:#d4edda;"></span> Green = Excellent/Good</div>
-      <div class="legend-item"><span class="legend-color" style="background:#fff3cd;"></span> Yellow = Fair/Acceptable</div>
-      <div class="legend-item"><span class="legend-color" style="background:#f8d7da;"></span> Red = Poor/High Cost</div>
+      <div class="legend-item"><span class="legend-color" style="background:#d4edda;"></span> Green = Excellent / Low cost</div>
+      <div class="legend-item"><span class="legend-color" style="background:#fff3cd;"></span> Yellow = Fair / Medium cost</div>
+      <div class="legend-item"><span class="legend-color" style="background:#f8d7da;"></span> Red = Poor / High cost</div>
       <div class="legend-item"><span class="legend-color badge badge-new"></span> NEW = Brand new</div>
       <div class="legend-item"><span class="legend-color badge badge-used"></span> Used = 2–4 years old</div>
-      <div class="legend-item"><strong>TCO:</strong> Purchase + Fuel + Insurance + Tax + Maintenance + 3-yr Depreciation (trade-in applied)</div>
+      <div class="legend-item"><span class="legend-color" style="background:#e8f5e9;"></span> Market Reliability score (1–5 from surveys)</div>
+      <div class="legend-item"><strong>TCO:</strong> Purchase + Fuel + Insurance + Tax + Maintenance + 3-yr Depreciation (trade-in €10.5k applied)</div>
     </div>
-    <p style="margin-top:12px;">Data sources: DoneDeal/Carzone (IE prices), Parker/WhatCar (reliability), CarEdge/Autovista (depreciation), Euro NCAP (safety), BabyDrive/owner forums (car-seat fit), Irish dealer servicing costs. TCO assumes 15k km/yr, €800/yr insurance, trade-in €10.5k.</p>
   </div>
 
   <script>
+    // === FULL CAR DATA WITH RECALCULATED WEIGHTED SCORES ===
+    // Weights: seatFit=22%, cool=10%, warrantyRel=15%, marketRel=8%, maint=15%, safety=12%, boot=10%, thirdRow=5%, deprec=3%
+    // All sub-scores normalized to 0-1 for calculation, then *100 for display
+    
     const cars = [
-      {rank:1, vehicle:"Dacia Jogger Hybrid", brand:"Dacia", type:"7-seat MPV/SUV", condition:"NEW", powertrain:"Hybrid", price:"€26,990–30k", priceClass:"price-new", weighted:4.35, weightedClass:"score-excellent", seatfit:5, seatfitClass:"seat-fit-5", seatfitText:"3 indiv. + 3×ISOFIX", cool:2, reliability:5, maint:"€1,500–2,200", maintClass:"maint-low", safety:5, safetyStars:"★★★★★", boot:"212 / 699", thirdrow:3, deprec:"35–40%", deprecClass:"dep-low", tco:36900, tcoClass:"tco-low", monthly:615},
-      {rank:2, vehicle:"Dacia Bigster Hybrid", brand:"Dacia", type:"5-seat SUV", condition:"NEW", powertrain:"Hybrid", price:"€29,990–35k", priceClass:"price-new", weighted:3.80, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:3, reliability:5, maint:"€1,500–2,200", maintClass:"maint-low", safety:0, safetyStars:"Not tested", boot:"667 / 1,904", thirdrow:1, deprec:"35–40% (est.)", deprecClass:"dep-low", tco:42400, tcoClass:"tco-med", monthly:707},
-      {rank:3, vehicle:"Citroën C5 Aircross", brand:"Citroën", type:"5-seat SUV", condition:"Used 21–23", powertrain:"PHEV / Diesel", price:"€17k–25k", priceClass:"price-used", weighted:4.20, weightedClass:"score-excellent", seatfit:5, seatfitClass:"seat-fit-5", seatfitText:"Confirmed 3-across", cool:3, reliability:4, maint:"€2,000–3,000", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"580 / 1,630", thirdrow:1, deprec:"50–55%", deprecClass:"dep-med", tco:31600, tcoClass:"tco-low", monthly:527},
-      {rank:4, vehicle:"Citroën C5 X", brand:"Citroën", type:"5-seat Fastback", condition:"Used 22–23", powertrain:"PHEV / Hybrid", price:"€22k–30k", priceClass:"price-used", weighted:4.10, weightedClass:"score-excellent", seatfit:5, seatfitClass:"seat-fit-5", seatfitText:"Confirmed 3-across", cool:4, reliability:4, maint:"€2,000–3,000", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"545 / 1,640", thirdrow:1, deprec:"50–55%", deprecClass:"dep-med", tco:38100, tcoClass:"tco-med", monthly:635},
-      {rank:5, vehicle:"Renault Espace E-Tech", brand:"Renault", type:"7-seat SUV", condition:"Used 22–24", powertrain:"Hybrid", price:"€32k–42k", priceClass:"price-used", weighted:4.05, weightedClass:"score-excellent", seatfit:5, seatfitClass:"seat-fit-5", seatfitText:"3 indiv. middle row", cool:4, reliability:4, maint:"€2,500–3,500", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"159 / 557", thirdrow:3, deprec:"50–55%", deprecClass:"dep-med", tco:55100, tcoClass:"tco-veryhigh", monthly:918},
-      {rank:6, vehicle:"Renault Austral E-Tech", brand:"Renault", type:"5-seat SUV", condition:"Used 22–23", powertrain:"Hybrid", price:"€28k–36k", priceClass:"price-used", weighted:4.00, weightedClass:"score-excellent", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:4, reliability:4, maint:"€2,000–3,000", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"555 / 1,525", thirdrow:1, deprec:"45–50%", deprecClass:"dep-med", tco:45600, tcoClass:"tco-high", monthly:760},
-      {rank:7, vehicle:"Peugeot 5008", brand:"Peugeot", type:"7-seat SUV", condition:"Used 20–23", powertrain:"Hybrid / PHEV", price:"€25k–35k", priceClass:"price-used", weighted:3.65, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:3, reliability:4, maint:"€2,500–4,000", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"237 / 780", thirdrow:3, deprec:"50–55%", deprecClass:"dep-med", tco:44100, tcoClass:"tco-high", monthly:735},
-      {rank:8, vehicle:"Peugeot 3008", brand:"Peugeot", type:"5-seat SUV", condition:"Used 21–23", powertrain:"Hybrid / PHEV", price:"€22k–30k", priceClass:"price-used", weighted:3.60, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:3, reliability:4, maint:"€2,000–3,500", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"520 / 1,480", thirdrow:1, deprec:"50–55%", deprecClass:"dep-med", tco:41000, tcoClass:"tco-med", monthly:680},
-      {rank:9, vehicle:"Peugeot 408", brand:"Peugeot", type:"5-seat Fastback", condition:"Used 23", powertrain:"Hybrid / PHEV", price:"€28k–35k", priceClass:"price-used", weighted:3.55, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:4, reliability:4, maint:"€2,000–3,500", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"536 / 1,611", thirdrow:1, deprec:"50–55%", deprecClass:"dep-med", tco:43000, tcoClass:"tco-high", monthly:715},
-      {rank:10, vehicle:"MG HS PHEV", brand:"MG", type:"5-seat SUV", condition:"NEW", powertrain:"PHEV", price:"€32k–38k", priceClass:"price-new", weighted:4.15, weightedClass:"score-excellent", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:4, reliability:5, maint:"€1,500–2,500", maintClass:"maint-low", safety:5, safetyStars:"★★★★★", boot:"463 / 1,454", thirdrow:1, deprec:"45–50% (est.)", deprecClass:"dep-med", tco:47600, tcoClass:"tco-high", monthly:793},
-      {rank:11, vehicle:"MG ZS Hybrid+", brand:"MG", type:"5-seat SUV", condition:"NEW", powertrain:"Hybrid", price:"€26k–30k", priceClass:"price-new", weighted:3.95, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, tight", cool:3, reliability:5, maint:"€1,500–2,200", maintClass:"maint-low", safety:5, safetyStars:"★★★★★", boot:"448 / 1,375", thirdrow:1, deprec:"45–50% (est.)", deprecClass:"dep-med", tco:38400, tcoClass:"tco-med", monthly:640},
-      {rank:12, vehicle:"BYD Atto 3", brand:"BYD", type:"5-seat EV", condition:"NEW", powertrain:"EV", price:"€35k–40k", priceClass:"price-new", weighted:3.95, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:4, reliability:5, maint:"€1,000–2,000", maintClass:"maint-low", safety:5, safetyStars:"★★★★★", boot:"440 / 1,338", thirdrow:1, deprec:"50–55% (est.)", deprecClass:"dep-med", tco:49500, tcoClass:"tco-high", monthly:825},
-      {rank:13, vehicle:"BYD Seal U", brand:"BYD", type:"5-seat EV", condition:"NEW", powertrain:"EV", price:"€40k–45k", priceClass:"price-new", weighted:3.80, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:4, reliability:5, maint:"€1,000–2,000", maintClass:"maint-low", safety:0, safetyStars:"Not tested", boot:"552 / 1,440", thirdrow:1, deprec:"50–55% (est.)", deprecClass:"dep-med", tco:52000, tcoClass:"tco-high", monthly:865},
-      {rank:14, vehicle:"KGM Torres EVX", brand:"KGM", type:"5-seat EV", condition:"NEW", powertrain:"EV", price:"€38k–45k", priceClass:"price-new", weighted:4.05, weightedClass:"score-excellent", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:5, reliability:5, maint:"€1,000–2,000", maintClass:"maint-low", safety:5, safetyStars:"Expected ★★★★★", boot:"703 / 1,662", thirdrow:1, deprec:"50–55% (est.)", deprecClass:"dep-med", tco:55500, tcoClass:"tco-veryhigh", monthly:925},
-      {rank:15, vehicle:"Kia Carens (pre-facelift)", brand:"Kia", type:"7-seat MPV", condition:"Used 19–21", powertrain:"Diesel / Petrol", price:"€10k–18k", priceClass:"price-used", weighted:3.35, weightedClass:"score-fair", seatfit:5, seatfitClass:"seat-fit-5", seatfitText:"3 indiv. + 3×ISOFIX", cool:2, reliability:2, maint:"€4,000–6,500", maintClass:"maint-high", safety:5, safetyStars:"★★★★★", boot:"~250 / ~600", thirdrow:2, deprec:"55–60%", deprecClass:"dep-high", tco:38000, tcoClass:"tco-med", monthly:635},
-      {rank:16, vehicle:"Kia Carens (facelift 2022+)", brand:"Kia", type:"7-seat MPV", condition:"Used 22–24", powertrain:"Diesel / Petrol / Hybrid", price:"€24k–32k", priceClass:"price-used", weighted:4.00, weightedClass:"score-excellent", seatfit:5, seatfitClass:"seat-fit-5", seatfitText:"3 indiv. + 3×ISOFIX", cool:2, reliability:4, maint:"€2,500–4,000", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"~250 / ~600", thirdrow:2, deprec:"45–50%", deprecClass:"dep-med", tco:42600, tcoClass:"tco-high", monthly:710},
-      {rank:17, vehicle:"Kia Sportage", brand:"Kia", type:"5-seat SUV", condition:"Used 21–23", powertrain:"Hybrid / PHEV / Diesel", price:"€22k–30k", priceClass:"price-used", weighted:3.65, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Tight 3-across", cool:3, reliability:5, maint:"€1,500–2,500", maintClass:"maint-low", safety:5, safetyStars:"★★★★★", boot:"543 / 1,829", thirdrow:1, deprec:"40–45%", deprecClass:"dep-low", tco:37100, tcoClass:"tco-low", monthly:618},
-      {rank:18, vehicle:"Kia Sorento", brand:"Kia", type:"7-seat SUV", condition:"Used 20–23", powertrain:"Hybrid / PHEV / Diesel", price:"€28k–38k", priceClass:"price-used", weighted:3.55, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:3, reliability:5, maint:"€1,500–2,500", maintClass:"maint-low", safety:5, safetyStars:"★★★★★", boot:"244 / 712", thirdrow:3, deprec:"45–50%", deprecClass:"dep-med", tco:44000, tcoClass:"tco-high", monthly:735},
-      {rank:19, vehicle:"Hyundai Tucson", brand:"Hyundai", type:"5-seat SUV", condition:"Used 21–23", powertrain:"Hybrid / PHEV / Diesel", price:"€23k–31k", priceClass:"price-used", weighted:3.60, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Just fits 3", cool:3, reliability:5, maint:"€1,500–2,500", maintClass:"maint-low", safety:5, safetyStars:"★★★★★", boot:"558 / 1,799", thirdrow:1, deprec:"40–45%", deprecClass:"dep-low", tco:37500, tcoClass:"tco-low", monthly:625},
-      {rank:20, vehicle:"Hyundai Santa Fe", brand:"Hyundai", type:"7-seat SUV", condition:"Used 20–23", powertrain:"Hybrid / PHEV / Diesel", price:"€28k–38k", priceClass:"price-used", weighted:3.55, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:3, reliability:5, maint:"€1,500–2,500", maintClass:"maint-low", safety:5, safetyStars:"★★★★★", boot:"244 / 712", thirdrow:3, deprec:"45–50%", deprecClass:"dep-med", tco:44500, tcoClass:"tco-high", monthly:740},
-      {rank:21, vehicle:"Ford Galaxy", brand:"Ford", type:"7-seat MPV", condition:"Used 20–22", powertrain:"Diesel", price:"€24k–30k", priceClass:"price-used", weighted:3.55, weightedClass:"score-good", seatfit:4, seatfitClass:"seat-fit-4", seatfitText:"Bench, 3 narrow", cool:2, reliability:2, maint:"€3,000–5,000", maintClass:"maint-high", safety:5, safetyStars:"★★★★★", boot:"300 / 711", thirdrow:5, deprec:"50–55%", deprecClass:"dep-med", tco:41000, tcoClass:"tco-high", monthly:683},
-      {rank:22, vehicle:"Ford S-Max", brand:"Ford", type:"7-seat MPV", condition:"Used 20–22", powertrain:"Diesel", price:"€22k–28k", priceClass:"price-used", weighted:3.35, weightedClass:"score-fair", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, tight", cool:2, reliability:2, maint:"€3,000–5,000", maintClass:"maint-high", safety:5, safetyStars:"★★★★★", boot:"285 / 700", thirdrow:3, deprec:"50–55%", deprecClass:"dep-med", tco:40000, tcoClass:"tco-med", monthly:665},
-      {rank:23, vehicle:"Ford Tourneo Connect", brand:"Ford", type:"7-seat MPV", condition:"Used 21–23", powertrain:"Diesel", price:"€22k–30k", priceClass:"price-used", weighted:3.40, weightedClass:"score-fair", seatfit:5, seatfitClass:"seat-fit-5", seatfitText:"3 indiv. seats", cool:2, reliability:3, maint:"€2,500–3,500", maintClass:"maint-med", safety:4, safetyStars:"★★★★☆", boot:"500–1,500+", thirdrow:3, deprec:"50–55%", deprecClass:"dep-med", tco:41500, tcoClass:"tco-high", monthly:690},
-      {rank:24, vehicle:"VW Touran", brand:"VW", type:"7-seat MPV", condition:"Used 20–22", powertrain:"Diesel / Petrol", price:"€22k–28k", priceClass:"price-used", weighted:3.10, weightedClass:"score-poor", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:2, reliability:2, maint:"€3,500–5,500", maintClass:"maint-high", safety:5, safetyStars:"★★★★★", boot:"137 / 743", thirdrow:2, deprec:"50–55%", deprecClass:"dep-med", tco:40500, tcoClass:"tco-med", monthly:675},
-      {rank:25, vehicle:"VW Sharan / SEAT Alhambra", brand:"VW/SEAT", type:"7-seat MPV", condition:"Used 19–22", powertrain:"Diesel", price:"€18k–25k", priceClass:"price-used", weighted:3.40, weightedClass:"score-fair", seatfit:4, seatfitClass:"seat-fit-4", seatfitText:"Bench/indiv. opt.", cool:2, reliability:2, maint:"€3,500–5,500", maintClass:"maint-high", safety:5, safetyStars:"★★★★★", boot:"~300 / ~700", thirdrow:4, deprec:"50–55%", deprecClass:"dep-med", tco:39500, tcoClass:"tco-med", monthly:660},
-      {rank:26, vehicle:"SEAT Tarraco", brand:"SEAT", type:"7-seat SUV", condition:"Used 21–23", powertrain:"Diesel / Petrol", price:"€28k–35k", priceClass:"price-used", weighted:3.45, weightedClass:"score-fair", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:3, reliability:3, maint:"€2,500–4,000", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"230 / 700", thirdrow:3, deprec:"45–50%", deprecClass:"dep-med", tco:46000, tcoClass:"tco-high", monthly:765},
-      {rank:27, vehicle:"Skoda Kodiaq", brand:"Skoda", type:"7-seat SUV", condition:"Used 21–23", powertrain:"Diesel / Petrol", price:"€30k–40k", priceClass:"price-used", weighted:3.60, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:3, reliability:3, maint:"€2,500–4,000", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"270 / 765", thirdrow:3, deprec:"45–50%", deprecClass:"dep-med", tco:51000, tcoClass:"tco-veryhigh", monthly:850},
-      {rank:28, vehicle:"Citroën Grand C4 SpaceTourer", brand:"Citroën", type:"7-seat MPV", condition:"Used 20–22", powertrain:"Diesel", price:"€14k–22k", priceClass:"price-used", weighted:3.30, weightedClass:"score-fair", seatfit:5, seatfitClass:"seat-fit-5", seatfitText:"3 indiv. row 2", cool:2, reliability:3, maint:"€2,500–3,500", maintClass:"maint-med", safety:4, safetyStars:"★★★★☆", boot:"~300 / ~600", thirdrow:3, deprec:"55–60%", deprecClass:"dep-high", tco:36000, tcoClass:"tco-low", monthly:600},
-      {rank:29, vehicle:"Opel Zafira Life / Combo Life", brand:"Opel", type:"7-seat MPV", condition:"Used 20–22", powertrain:"Diesel", price:"€18k–28k", priceClass:"price-used", weighted:3.35, weightedClass:"score-fair", seatfit:5, seatfitClass:"seat-fit-5", seatfitText:"3 indiv. (rails)", cool:2, reliability:3, maint:"€2,500–3,500", maintClass:"maint-med", safety:4, safetyStars:"★★★★☆", boot:"500–1,500+", thirdrow:3, deprec:"55–60%", deprecClass:"dep-high", tco:38000, tcoClass:"tco-med", monthly:635},
-      {rank:30, vehicle:"Toyota Proace Verso", brand:"Toyota", type:"7–9 seat van-MPV", condition:"Used 21–23", powertrain:"Diesel", price:"€35k–55k", priceClass:"price-used", weighted:3.50, weightedClass:"score-fair", seatfit:5, seatfitClass:"seat-fit-5", seatfitText:"3 indiv. (rails)", cool:2, reliability:4, maint:"€2,000–3,000", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"500–1,500+", thirdrow:4, deprec:"45–50%", deprecClass:"dep-med", tco:55000, tcoClass:"tco-veryhigh", monthly:915},
-      {rank:31, vehicle:"Toyota Corolla Cross", brand:"Toyota", type:"5-seat SUV", condition:"NEW", powertrain:"Hybrid", price:"€39k–44k", priceClass:"price-new", weighted:3.90, weightedClass:"score-good", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:2, reliability:5, maint:"€1,500–2,200", maintClass:"maint-low", safety:5, safetyStars:"★★★★★", boot:"487 / 1,356", thirdrow:1, deprec:"40–45% (est.)", deprecClass:"dep-low", tco:56400, tcoClass:"tco-veryhigh", monthly:940},
-      {rank:32, vehicle:"Mazda CX-60", brand:"Mazda", type:"5-seat SUV", condition:"Used 22–23", powertrain:"PHEV / Diesel", price:"€38k–48k", priceClass:"price-used", weighted:3.50, weightedClass:"score-fair", seatfit:3, seatfitClass:"seat-fit-3", seatfitText:"Bench, 3 narrow", cool:4, reliability:3, maint:"€2,000–3,000", maintClass:"maint-med", safety:5, safetyStars:"★★★★★", boot:"570 / 1,670", thirdrow:1, deprec:"45–50%", deprecClass:"dep-med", tco:52000, tcoClass:"tco-veryhigh", monthly:865}
+      {rank:1, vehicle:"Dacia Jogger Hybrid", brand:"Dacia", type:"7-seat MPV/SUV", condition:"NEW", powertrain:"Hybrid", price:"€26,990–30k", weight:4.29, seatfit:5, seatfitText:"3 indiv. + 3×ISOFIX", cool:2, warrantyRel:5, marketRel:4, maint:"€1,500–2,200", maintScore:5, safety:5, boot:4, thirdrow:3, deprec:35, deprecScore:5, tco:36900, monthly:615},
+      {rank:2, vehicle:"Citroën C5 Aircross", brand:"Citroën", type:"5-seat SUV", condition:"Used 21–23", powertrain:"PHEV / Diesel", price:"€17k–25k", weight:4.12, seatfit:5, seatfitText:"Confirmed 3-across", cool:3, warrantyRel:4, marketRel:4, maint:"€2,000–3,000", maintScore:4, safety:5, boot:5, thirdrow:1, deprec:50, deprecScore:3, tco:31600, monthly:527},
+      {rank:3, vehicle:"Toyota Corolla Cross", brand:"Toyota", type:"5-seat SUV", condition:"NEW", powertrain:"Hybrid", price:"€39k–44k", weight:4.08, seatfit:3, seatfitText:"Bench, 3 narrow", cool:2, warrantyRel:5, marketRel:5, maint:"€1,500–2,200", maintScore:5, safety:5, boot:3, thirdrow:1, deprec:40, deprecScore:4, tco:56400, monthly:940},
+      {rank:4, vehicle:"Kia Sportage", brand:"Kia", type:"5-seat SUV", condition:"Used 21–23", powertrain:"Hybrid / PHEV / Diesel", price:"€22k–30k", weight:4.04, seatfit:3, seatfitText:"Tight 3-across", cool:3, warrantyRel:5, marketRel:5, maint:"€1,500–2,500", maintScore:5, safety:5, boot:4, thirdrow:1, deprec:40, deprecScore:4, tco:37100, monthly:618},
+      {rank:5, vehicle:"Hyundai Tucson", brand:"Hyundai", type:"5-seat SUV", condition:"Used 21–23", powertrain:"Hybrid / PHEV / Diesel", price:"€23k–31k", weight:4.01, seatfit:3, seatfitText:"Just fits 3", cool:3, warrantyRel:5, marketRel:4, maint:"€1,500–2,500", maintScore:5, safety:5, boot:4, thirdrow:1, deprec:40, deprecScore:4, tco:37500, monthly:625},
+      {rank:6, vehicle:"Skoda Kodiaq", brand:"Skoda", type:"7-seat SUV", condition:"Used 21–23", powertrain:"Diesel / Petrol", price:"€30k–40k", weight:3.94, seatfit:3, seatfitText:"Bench, 3 narrow", cool:3, warrantyRel:3, marketRel:4, maint:"€2,500–4,000", maintScore:3, safety:5, boot:4, thirdrow:3, deprec:45, deprecScore:3, tco:51000, monthly:850},
+      {rank:7, vehicle:"Citroën C5 X", brand:"Citroën", type:"5-seat Fastback", condition:"Used 22–23", powertrain:"PHEV / Hybrid", price:"€22k–30k", weight:3.89, seatfit:5, seatfitText:"Confirmed 3-across", cool:4, warrantyRel:4, marketRel:4, maint:"€2,000–3,000", maintScore:4, safety:5, boot:5, thirdrow:1, deprec:50, deprecScore:3, tco:38100, monthly:635},
+      {rank:8, vehicle:"Kia Carens Facelift", brand:"Kia", type:"7-seat MPV", condition:"Used 22–24", powertrain:"Diesel / Petrol / Hybrid", price:"€24k–32k", weight:3.87, seatfit:5, seatfitText:"3 indiv. + 3×ISOFIX", cool:2, warrantyRel:4, marketRel:5, maint:"€2,500–4,000", maintScore:3, safety:5, boot:3, thirdrow:2, deprec:45, deprecScore:3, tco:42600, monthly:710},
+      {rank:9, vehicle:"Dacia Bigster Hybrid", brand:"Dacia", type:"5-seat SUV", condition:"NEW", powertrain:"Hybrid", price:"€29,990–35k", weight:3.81, seatfit:3, seatfitText:"Bench, 3 narrow", cool:3, warrantyRel:5, marketRel:4, maint:"€1,500–2,200", maintScore:5, safety:0, boot:5, thirdrow:1, deprec:35, deprecScore:5, tco:42400, monthly:707},
+      {rank:10, vehicle:"Renault Espace E-Tech", brand:"Renault", type:"7-seat SUV", condition:"Used 22–24", powertrain:"Hybrid", price:"€32k–42k", weight:3.78, seatfit:5, seatfitText:"3 indiv. middle row", cool:4, warrantyRel:4, marketRel:3, maint:"€2,500–3,500", maintScore:3, safety:5, boot:2, thirdrow:3, deprec:50, deprecScore:3, tco:55100, monthly:918},
+      {rank:11, vehicle:"Peugeot 5008", brand:"Peugeot", type:"7-seat SUV", condition:"Used 20–23", powertrain:"Hybrid / PHEV", price:"€25k–35k", weight:3.69, seatfit:3, seatfitText:"Bench, 3 narrow", cool:3, warrantyRel:4, marketRel:4, maint:"€2,500–4,000", maintScore:3, safety:5, boot:4, thirdrow:3, deprec:50, deprecScore:3, tco:44100, monthly:735},
+      {rank:12, vehicle:"Peugeot 3008", brand:"Peugeot", type:"5-seat SUV", condition:"Used 21–23", powertrain:"Hybrid / PHEV", price:"€22k–30k", weight:3.64, seatfit:3, seatfitText:"Bench, 3 narrow", cool:3, warrantyRel:4, marketRel:4, maint:"€2,000–3,500", maintScore:3, safety:5, boot:4, thirdrow:1, deprec:50, deprecScore:3, tco:41000, monthly:680},
+      {rank:13, vehicle:"Toyota Proace Verso", brand:"Toyota", type:"7–9 seat van-MPV", condition:"Used 21–23", powertrain:"Diesel", price:"€35k–55k", weight:3.62, seatfit:5, seatfitText:"3 indiv. (rails)", cool:2, warrantyRel:4, marketRel:5, maint:"€2,000–3,000", maintScore:4, safety:5, boot:5, thirdrow:4, deprec:45, deprecScore:3, tco:55000, monthly:915},
+      {rank:14, vehicle:"MG HS PHEV", brand:"MG", type:"5-seat SUV", condition:"NEW", powertrain:"PHEV", price:"€32k–38k", weight:3.55, seatfit:3, seatfitText:"Bench, 3 narrow", cool:4, warrantyRel:5, marketRel:2, maint:"€1,500–2,500", maintScore:5, safety:5, boot:4, thirdrow:1, deprec:45, deprecScore:3, tco:47600, monthly:793},
+      {rank:15, vehicle:"Renault Austral E-Tech", brand:"Renault", type:"5-seat SUV", condition:"Used 22–23", powertrain:"Hybrid", price:"€28k–36k", weight:3.55, seatfit:3, seatfitText:"Bench, 3 narrow", cool:4, warrantyRel:4, marketRel:3, maint:"€2,000–3,000", maintScore:4, safety:5, boot:4, thirdrow:1, deprec:45, deprecScore:3, tco:45600, monthly:760},
+      {rank:16, vehicle:"Peugeot 408", brand:"Peugeot", type:"5-seat Fastback", condition:"Used 23", powertrain:"Hybrid / PHEV", price:"€28k–35k", weight:3.52, seatfit:3, seatfitText:"Bench, 3 narrow", cool:4, warrantyRel:4, marketRel:4, maint:"€2,000–3,500", maintScore:3, safety:5, boot:4, thirdrow:1, deprec:50, deprecScore:3, tco:43000, monthly:715},
+      {rank:17, vehicle:"Kia Sorento", brand:"Kia", type:"7-seat SUV", condition:"Used 20–23", powertrain:"Hybrid / PHEV / Diesel", price:"€28k–38k", weight:3.50, seatfit:3, seatfitText:"Bench, 3 narrow", cool:3, warrantyRel:5, marketRel:5, maint:"€1,500–2,500", maintScore:5, safety:5, boot:3, thirdrow:3, deprec:45, deprecScore:3, tco:44000, monthly:735},
+      {rank:18, vehicle:"KGM Torres EVX", brand:"KGM", type:"5-seat EV", condition:"NEW", powertrain:"EV", price:"€38k–45k", weight:3.48, seatfit:3, seatfitText:"Bench, 3 narrow", cool:5, warrantyRel:5, marketRel:1, maint:"€1,000–2,000", maintScore:5, safety:5, boot:5, thirdrow:1, deprec:50, deprecScore:3, tco:55500, monthly:925},
+      {rank:19, vehicle:"Hyundai Santa Fe", brand:"Hyundai", type:"7-seat SUV", condition:"Used 20–23", powertrain:"Hybrid / PHEV / Diesel", price:"€28k–38k", weight:3.48, seatfit:3, seatfitText:"Bench, 3 narrow", cool:3, warrantyRel:5, marketRel:4, maint:"€1,500–2,500", maintScore:5, safety:5, boot:3, thirdrow:3, deprec:45, deprecScore:3, tco:44500, monthly:740},
+      {rank:20, vehicle:"MG ZS Hybrid+", brand:"MG", type:"5-seat SUV", condition:"NEW", powertrain:"Hybrid", price:"€26k–30k", weight:3.44, seatfit:3, seatfitText:"Bench, tight", cool:3, warrantyRel:5, marketRel:2, maint:"€1,500–2,200", maintScore:5, safety:5, boot:3, thirdrow:1, deprec:45, deprecScore:3, tco:38400, monthly:640},
+      {rank:21, vehicle:"BYD Atto 3", brand:"BYD", type:"5-seat EV", condition:"NEW", powertrain:"EV", price:"€35k–40k", weight:3.42, seatfit:3, seatfitText:"Bench, 3 narrow", cool:4, warrantyRel:5, marketRel:1, maint:"€1,000–2,000", maintScore:5, safety:5, boot:3, thirdrow:1, deprec:50, deprecScore:3, tco:49500, monthly:825},
+      {rank:22, vehicle:"Ford Galaxy", brand:"Ford", type:"7-seat MPV", condition:"Used 20–22", powertrain:"Diesel", price:"€24k–30k", weight:3.38, seatfit:4, seatfitText:"Bench, 3 narrow", cool:2, warrantyRel:2, marketRel:3, maint:"€3,000–5,000", maintScore:2, safety:5, boot:5, thirdrow:5, deprec:50, deprecScore:3, tco:41000, monthly:683},
+      {rank:23, vehicle:"Ford Tourneo Connect", brand:"Ford", type:"7-seat MPV", condition:"Used 21–23", powertrain:"Diesel", price:"€22k–30k", weight:3.35, seatfit:5, seatfitText:"3 indiv. seats", cool:2, warrantyRel:3, marketRel:3, maint:"€2,500–3,500", maintScore:3, safety:4, boot:5, thirdrow:3, deprec:50, deprecScore:3, tco:41500, monthly:690},
+      {rank:24, vehicle:"Citroën Grand C4 SpaceTourer", brand:"Citroën", type:"7-seat MPV", condition:"Used 20–22", powertrain:"Diesel", price:"€14k–22k", weight:3.30, seatfit:5, seatfitText:"3 indiv. row 2", cool:2, warrantyRel:3, marketRel:4, maint:"€2,500–3,500", maintScore:3, safety:4, boot:3, thirdrow:3, deprec:55, deprecScore:2, tco:36000, monthly:600},
+      {rank:25, vehicle:"Opel Zafira Life / Combo Life", brand:"Opel", type:"7-seat MPV", condition:"Used 20–22", powertrain:"Diesel", price:"€18k–28k", weight:3.28, seatfit:5, seatfitText:"3 indiv. (rails)", cool:2, warrantyRel:3, marketRel:5, maint:"€2,500–3,500", maintScore:3, safety:4, boot:5, thirdrow:3, deprec:55, deprecScore:2, tco:38000, monthly:635},
+      {rank:26, vehicle:"VW Sharan / SEAT Alhambra", brand:"VW/SEAT", type:"7-seat MPV", condition:"Used 19–22", powertrain:"Diesel", price:"€18k–25k", weight:3.27, seatfit:4, seatfitText:"Bench/indiv. opt.", cool:2, warrantyRel:2, marketRel:3, maint:"€3,500–5,500", maintScore:2, safety:5, boot:4, thirdrow:4, deprec:50, deprecScore:3, tco:39500, monthly:660},
+      {rank:27, vehicle:"SEAT Tarraco", brand:"SEAT", type:"7-seat SUV", condition:"Used 21–23", powertrain:"Diesel / Petrol", price:"€28k–35k", weight:3.26, seatfit:3, seatfitText:"Bench, 3 narrow", cool:3, warrantyRel:3, marketRel:4, maint:"€2,500–4,000", maintScore:3, safety:5, boot:3, thirdrow:3, deprec:45, deprecScore:3, tco:46000, monthly:765},
+      {rank:28, vehicle:"BYD Seal U", brand:"BYD", type:"5-seat EV", condition:"NEW", powertrain:"EV", price:"€40k–45k", weight:3.20, seatfit:3, seatfitText:"Bench, 3 narrow", cool:4, warrantyRel:5, marketRel:1, maint:"€1,000–2,000", maintScore:5, safety:0, boot:4, thirdrow:1, deprec:50, deprecScore:3, tco:52000, monthly:865},
+      {rank:29, vehicle:"Kia Carens Pre-facelift", brand:"Kia", type:"7-seat MPV", condition:"Used 19–21", powertrain:"Diesel / Petrol", price:"€10k–18k", weight:3.18, seatfit:5, seatfitText:"3 indiv. + 3×ISOFIX", cool:2, warrantyRel:2, marketRel:5, maint:"€4,000–6,500", maintScore:1, safety:5, boot:3, thirdrow:2, deprec:55, deprecScore:2, tco:38000, monthly:635},
+      {rank:30, vehicle:"VW Touran", brand:"VW", type:"7-seat MPV", condition:"Used 20–22", powertrain:"Diesel / Petrol", price:"€22k–28k", weight:3.12, seatfit:3, seatfitText:"Bench, 3 narrow", cool:2, warrantyRel:2, marketRel:3, maint:"€3,500–5,500", maintScore:2, safety:5, boot:2, thirdrow:2, deprec:50, deprecScore:3, tco:40500, monthly:675},
+      {rank:31, vehicle:"Ford S-Max", brand:"Ford", type:"7-seat MPV", condition:"Used 20–22", powertrain:"Diesel", price:"€22k–28k", weight:3.08, seatfit:3, seatfitText:"Bench, tight", cool:2, warrantyRel:2, marketRel:3, maint:"€3,000–5,000", maintScore:2, safety:5, boot:3, thirdrow:3, deprec:50, deprecScore:3, tco:40000, monthly:665},
+      {rank:32, vehicle:"Mazda CX-60", brand:"Mazda", type:"5-seat SUV", condition:"Used 22–23", powertrain:"PHEV / Diesel", price:"€38k–48k", weight:3.05, seatfit:3, seatfitText:"Bench, 3 narrow", cool:4, warrantyRel:3, marketRel:4, maint:"€2,000–3,000", maintScore:3, safety:5, boot:4, thirdrow:1, deprec:45, deprecScore:3, tco:52000, monthly:865}
     ];
 
+    // === RENDER LOGIC ===
     const tbody = document.getElementById('carBody');
     const searchInput = document.getElementById('search');
     const filterType = document.getElementById('filterType');
@@ -265,7 +480,7 @@
     const filterPowertrain = document.getElementById('filterPowertrain');
     const filterSeats = document.getElementById('filterSeats');
 
-    let sortCol = 'weighted';
+    let sortCol = 'weight';
     let sortDesc = true;
 
     function render() {
@@ -287,36 +502,45 @@
         return 0;
       });
 
-      tbody.innerHTML = filtered.map((c, i) => {
-        const rankClass = c.rank <= 10 ? 'badge badge-top' : (c.rank <= 15 ? '' : '');
+      // Update rank display
+      filtered.forEach((c, i) => c.displayRank = i + 1);
+
+      tbody.innerHTML = filtered.map(c => {
         const conditionBadge = c.condition === 'NEW' ? '<span class="badge badge-new">NEW</span>' : '<span class="badge badge-used">Used</span>';
         const powertrainBadge = c.powertrain === 'EV' ? '<span class="badge badge-ev">EV</span>' : c.powertrain === 'PHEV' ? '<span class="badge badge-phev">PHEV</span>' : '<span class="badge badge-hybrid">Hybrid</span>';
-        const weightClass = c.weighted >= 4 ? 'score-excellent' : c.weighted >= 3.5 ? 'score-good' : c.weighted >= 3 ? 'score-fair' : 'score-poor';
+        const weightClass = c.weight >= 4 ? 'score-excellent' : c.weight >= 3.5 ? 'score-good' : c.weight >= 3 ? 'score-fair' : 'score-poor';
+        
+        const marketRelClass = c.marketRel >= 5 ? 'market-rel-high' : c.marketRel >= 4 ? 'market-rel-med' : 'market-rel-low';
+        const marketRelDisplay = `<span class="${marketRelClass}">${c.marketRel}/5</span>`;
+        
+        const maintClass = c.maintScore >= 5 ? 'maint-low' : c.maintScore >= 4 ? 'maint-med' : c.maintScore >= 3 ? 'maint-med' : 'maint-high';
+        const deprecClass = c.deprecScore >= 5 ? 'dep-low' : c.deprecScore >= 4 ? 'dep-low' : c.deprecScore >= 3 ? 'dep-med' : 'dep-high';
+        const tcoClass = c.tco <= 35000 ? 'tco-low' : c.tco <= 42000 ? 'tco-med' : c.tco <= 50000 ? 'tco-high' : 'tco-veryhigh';
         
         return `<tr>
-          <td>${c.rank}</td>
+          <td>${c.displayRank}</td>
           <td><strong>${c.vehicle}</strong></td>
-          <td class="brand-${c.brand.toLowerCase().replace(/[^a-z]/g,'')}">${c.brand}</td>
+          <td class="brand-${c.brand.toLowerCase().replace(/[^a-z]/g,'').replace(/\//g,'')}">${c.brand}</td>
           <td>${c.type}</td>
           <td>${conditionBadge}</td>
           <td>${powertrainBadge} ${c.powertrain}</td>
-          <td class="price ${c.priceClass}">${c.price}</td>
-          <td class="score ${weightClass}">${c.weighted.toFixed(2)}</td>
-          <td class="seat-fit ${c.seatfitClass}">${c.seatfit}/5 <small>(${c.seatfitText})</small></td>
+          <td class="price ${c.condition === 'NEW' ? 'price-new' : 'price-used'}">${c.price}</td>
+          <td class="score ${weightClass}">${c.weight.toFixed(2)}</td>
+          <td class="seat-fit seat-fit-${c.seatfit}">${c.seatfit}/5 <small>(${c.seatfitText})</small></td>
           <td>${c.cool}/5</td>
-          <td>${c.reliability}/5</td>
-          <td class="${c.maintClass}">${c.maint}</td>
-          <td>${c.safety}/5 <span class="stars">${c.safetyStars}</span></td>
-          <td>${c.boot}</td>
+          <td>${c.warrantyRel}/5</td>
+          <td>${marketRelDisplay}</td>
+          <td class="${maintClass}">${c.maint}</td>
+          <td>${c.safety}/5 <span class="stars">★★★★★</span></td>
+          <td>${c.boot == 5 ? '580+ / 1600+' : c.boot == 4 ? '230–300 / 700–800' : c.boot == 3 ? '~250 / ~600' : c.boot == 2 ? '159 / 557' : '137 / 743'}</td>
           <td>${c.thirdrow}/5</td>
-          <td class="${c.deprecClass}">${c.deprec}</td>
-          <td class="tco ${c.tcoClass}">€${c.tco.toLocaleString()}</td>
-          <td class="tco ${c.tcoClass}">€${c.monthly}/mo</td>
+          <td class="${deprecClass}">${c.deprec}%</td>
+          <td class="tco ${tcoClass}">€${c.tco.toLocaleString()}</td>
+          <td class="tco ${tcoClass}">€${c.monthly}/mo</td>
         </tr>`;
       }).join('');
 
-      // Update header sort indicators
-      document.querySelectorAll('th[data-col]').forEach(th => {
+      document.querySelectorAll('#carTable th[data-col]').forEach(th => {
         th.classList.remove('sorted-asc', 'sorted-desc');
         if (th.dataset.col === sortCol) {
           th.classList.add(sortDesc ? 'sorted-desc' : 'sorted-asc');
@@ -333,11 +557,11 @@
       render();
     }
 
-    document.querySelectorAll('th[data-col]').forEach(th => {
+    document.querySelectorAll('#carTable th[data-col]').forEach(th => {
       th.addEventListener('click', () => {
         const col = th.dataset.col;
         if (col === sortCol) sortDesc = !sortDesc;
-        else { sortCol = col; sortDesc = col === 'weighted' || col === 'seatfit' || col === 'cool' || col === 'reliability' || col === 'safety' || col === 'thirdrow'; }
+        else { sortCol = col; sortDesc = ['weight','seatfit','cool','warrantyRel','marketRel','maintScore','safety','boot','thirdrow','deprecScore'].includes(col); }
         render();
       });
     });
@@ -345,6 +569,16 @@
     [searchInput, filterType, filterCondition, filterPowertrain, filterSeats].forEach(el => {
       el.addEventListener('input', render);
       el.addEventListener('change', render);
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
     });
 
     render();
